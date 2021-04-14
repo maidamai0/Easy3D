@@ -38,6 +38,8 @@
 #include <3rd_party/imgui/imgui.h>
 #include <3rd_party/imgui/misc/fonts/imgui_fonts_droid_sans.h>
 
+#include "render_options_panel.h"
+
 namespace easy3d {
 
 ImGuiContext *MainWindow::context_ = nullptr;
@@ -72,12 +74,7 @@ void MainWindow::init() {
     io.WantCaptureKeyboard = true;
     io.WantTextInput = true;
     io.IniFilename = nullptr;
-    ImGui::StyleColorsLight();
-    ImGuiStyle &style = ImGui::GetStyle();
-    style.FrameRounding = 5.0f;
-
-    // load font
-    reload_font();
+    init_style();
   }
 }
 
@@ -97,6 +94,21 @@ void MainWindow::reload_font(int font_size) {
                                            font_size * dpi_scaling());
   io.FontGlobalScale = 1.0F / pixel_ratio();
   ImGui_ImplOpenGL3_DestroyDeviceObjects();
+}
+
+void MainWindow::init_style() {
+  ImGui::StyleColorsLight();
+  ImGuiStyle &style = ImGui::GetStyle();
+  style.FrameRounding = 5.0f;
+  style.ChildRounding = 5.0f;
+  style.GrabRounding = 5.0f;
+  style.PopupRounding = 5.0f;
+  style.ScrollbarRounding = 5.0f;
+  style.TabRounding = 5.0f;
+  style.WindowRounding = 5.0f;
+
+  // load font
+  reload_font();
 }
 
 void MainWindow::post_resize(int w, int h) {
@@ -160,84 +172,9 @@ void MainWindow::pre_draw() {
   Viewer::pre_draw();
 }
 
-void MainWindow::draw_overlay(bool *visible) {
-  ImGui::SetNextWindowSize(
-      ImVec2(300 * widget_scaling(), 200 * widget_scaling()),
-      ImGuiCond_FirstUseEver);
-  const float distance = 10.0f;
-  static int corner = 1;
-  ImVec2 window_pos =
-      ImVec2(ImGui::GetIO().DisplaySize.x - distance, distance + 30);
-  ImVec2 window_pos_pivot =
-      ImVec2((corner & 1) ? 1.0f : 0.0f, (corner & 2) ? 1.0f : 0.0f);
-  if (corner != -1)
-    ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
-  ImGui::SetNextWindowBgAlpha(alpha_); // Transparent background
-  if (ImGui::Begin(
-          "Easy3D: Information", visible,
-          (corner != -1 ? ImGuiWindowFlags_NoMove : 0) |
-              ImGuiWindowFlags_NoTitleBar |
-              ImGuiWindowFlags_NoResize /* | ImGuiWindowFlags_AlwaysAutoResize*/
-              | ImGuiWindowFlags_NoSavedSettings |
-              ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) {
-    ImGui::Text("Info (right-click to change position)");
-    ImGui::Separator();
-
-    if (current_model()) {
-      const std::string &name =
-          "Current model: " + file_system::simple_name(current_model()->name());
-      ImGui::Text("%s", name.c_str());
-      if (dynamic_cast<PointCloud *>(current_model())) {
-        PointCloud *cloud = dynamic_cast<PointCloud *>(current_model());
-        ImGui::Text("Type: point cloud");
-        ImGui::Text("#Vertices: %i", cloud->n_vertices());
-      } else if (dynamic_cast<SurfaceMesh *>(current_model())) {
-        SurfaceMesh *mesh = dynamic_cast<SurfaceMesh *>(current_model());
-        ImGui::Text("Type: surface mesh");
-        ImGui::Text("#Faces: %i", mesh->n_faces());
-        ImGui::Text("#Vertices: %i", mesh->n_vertices());
-        ImGui::Text("#Edges: %i", mesh->n_edges());
-      }
-    }
-    ImGui::Separator();
-
-    int w, h;
-    glfwGetWindowSize(window_, &w, &h);
-    float x = ImGui::GetIO().MousePos.x;
-    float y = ImGui::GetIO().MousePos.y;
-    if (x >= 0 && x <= w && y >= 0 && y <= h) {
-      bool target = false;
-      const vec3 &p =
-          point_under_pixel(static_cast<int>(x), static_cast<int>(y), target);
-      if (target)
-        ImGui::Text("Point Under Mouse: (%.5f, %.5f, %.5f)", p.x, p.y, p.z);
-      else
-        ImGui::Text("Point Under Mouse: <invalid>");
-    } else {
-      ImGui::Text("Mouse Position: <invalid>");
-      ImGui::Text("Point Under Mouse: <invalid>");
-    }
-    if (ImGui::BeginPopupContextWindow()) {
-      if (ImGui::MenuItem("Custom", nullptr, corner == -1))
-        corner = -1;
-      if (ImGui::MenuItem("Top-left", nullptr, corner == 0))
-        corner = 0;
-      if (ImGui::MenuItem("Top-right", nullptr, corner == 1))
-        corner = 1;
-      if (ImGui::MenuItem("Bottom-left", nullptr, corner == 2))
-        corner = 2;
-      if (ImGui::MenuItem("Bottom-right", nullptr, corner == 3))
-        corner = 3;
-      if (visible && ImGui::MenuItem("Close"))
-        *visible = false;
-      ImGui::EndPopup();
-    }
-  }
-  ImGui::End();
-}
-
 void MainWindow::post_draw() {
   ImGui::ShowDemoWindow();
+
   // static bool show_overlay = true;
   // if (show_overlay)
   //   draw_overlay(&show_overlay);
@@ -290,6 +227,8 @@ void MainWindow::post_draw() {
     ImGui::EndMainMenuBar();
   }
 
+  RenderOptionsPanel::show();
+
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -322,22 +261,6 @@ void MainWindow::draw_menu_view() {
     ImGui::Separator();
     if (ImGui::BeginMenu("Options")) {
       ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
-
-      static int style_idx = 1;
-      if (ImGui::Combo("Style", &style_idx, "Classic\0Dark\0Light\0")) {
-        switch (style_idx) {
-        case 0:
-          ImGui::StyleColorsClassic();
-          break;
-        case 1:
-          ImGui::StyleColorsDark();
-          break;
-        case 2:
-          ImGui::StyleColorsLight();
-          break;
-        }
-      }
-
       ImGui::Checkbox("Panel Movable", &movable_);
       ImGui::ColorEdit3("Background Color", (float *)background_color_,
                         ImGuiColorEditFlags_NoInputs);

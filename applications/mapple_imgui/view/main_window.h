@@ -64,7 +64,7 @@ protected:
   void draw_menu_file();
   void draw_menu_view();
 
-protected:
+private:
   // Ratio between the framebuffer size and the window size.
   // May be different from the DPI scaling!
   float pixel_ratio();
@@ -74,12 +74,9 @@ protected:
   // We don't need a per-window font. So this function is static
   void reload_font(int font_size = 15);
 
-  // To provide real-time feedback to the user, e.g., current state of the
-  // model and viewer, etc. This is implemented as a simple static window
-  // with no decoration + a context-menu to choose its position.
-  void draw_overlay(bool *visible);
+  void init_style();
 
-protected:
+private:
   // Single global context by default, but can be overridden by the user
   static ImGuiContext *context_;
 

@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "lay_out.hpp"
 #include "settings.h"
 
 #include "common/singleton.hpp"
@@ -16,11 +17,20 @@ class State {
   State &operator=(State &&) = delete;
 
 public:
+  // settings
   auto LogLevel() const { return settings_.log_level_; }
   const auto &LogPath() const { return settings_.log_file_path_; }
 
+  // layout
+  auto RenderOptionsPanelWidth() const {
+    return layout_.render_options_panel_idth_;
+  }
+
+  auto Margin() { return layout_.margin_; }
+
 private:
   Settings settings_;
+  Layout layout_;
 };
 } // namespace state
 
