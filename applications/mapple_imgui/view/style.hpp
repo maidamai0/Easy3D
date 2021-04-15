@@ -43,6 +43,7 @@ inline void init_style(const float pixel_ratio, const float dpi_scaling) {
   style.ScrollbarRounding = 5.0f;
   style.TabRounding = 5.0f;
   style.WindowRounding = 5.0f;
+  style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
 
   // load font
   reload_font(pixel_ratio, dpi_scaling);

@@ -151,6 +151,7 @@ void MainWindow::pre_draw() {
 
 void MainWindow::post_draw() {
   ImGui::ShowDemoWindow();
+  ImGui::ShowMetricsWindow();
 
   // static bool show_overlay = true;
   // if (show_overlay)

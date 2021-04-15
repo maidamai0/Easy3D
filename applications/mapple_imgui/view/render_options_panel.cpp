@@ -3,6 +3,7 @@
 #include "state/state.h"
 #include "view/style.hpp"
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace RenderOptionsPanel {
@@ -30,26 +31,9 @@ void show() {
 
   // tabs
   {
-    std::vector<std::string> tab_names{"Point", "Line", "Face"};
-    const auto tab_width =
-        AppState().RenderOptionsPanelWidth() - AppState().Margin() * 10;
-    const auto tab_btn_width =
-        (tab_width - AppState().Margin() * 2) / tab_names.size();
-    ImGui::BeginChild(
-        "RenderOptionsWindow_Tab",
-        {AppState().RenderOptionsPanelWidth() - AppState().Margin() * 10,
-         AppState().TabHeight()},
-        true, option_flags | ImGuiWindowFlags_NoScrollbar);
-
-    ImGui::SetCursorPosX(AppState().Margin());
-    for (int i = 0; i < tab_names.size(); ++i) {
-      ImGui::SetCursorPosX(tab_btn_width * i);
-      ImGui::Text("%s", tab_names[i].c_str());
-      if (i != tab_names.size() - 1) {
-        ImGui::SameLine();
-      }
-    }
-    ImGui::EndChild();
+    static auto tabs = std::vector<std::pair<std::string, bool>>{
+        {"Point", true}, {"Line", false}, {"Face", false}};
+    ImGuiHelper::ButtonTab(tabs);
   }
 
   ImGui::End();
