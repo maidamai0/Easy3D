@@ -26,7 +26,8 @@ public:
     return layout_.render_options_panel_idth_;
   }
 
-  auto Margin() { return layout_.margin_; }
+  auto Margin() const { return layout_.margin_; }
+  auto TabHeight() const { return layout_.tab_width_; }
 
 private:
   Settings settings_;

@@ -39,6 +39,7 @@
 #include <3rd_party/imgui/misc/fonts/imgui_fonts_droid_sans.h>
 
 #include "render_options_panel.h"
+#include "style.hpp"
 
 namespace easy3d {
 
@@ -56,6 +57,7 @@ MainWindow::MainWindow(const std::string &title /* = "Easy3D ImGui Viewer" */,
   camera()->setUpVector(vec3(0, 1, 0));
   camera()->setViewDirection(vec3(0, 0, -1));
   camera_->showEntireScene();
+  set_background_color({1.0f, 1.0f, 1.0f, 1.0f});
 }
 
 void MainWindow::init() {
@@ -71,10 +73,10 @@ void MainWindow::init() {
     ImGui_ImplGlfw_InitForOpenGL(window_, false);
     ImGui_ImplOpenGL3_Init(glsl_version);
     ImGuiIO &io = ImGui::GetIO();
-    io.WantCaptureKeyboard = true;
+    // io.WantCaptureKeyboard = true;
     io.WantTextInput = true;
     io.IniFilename = nullptr;
-    init_style();
+    style::init_style(pixel_ratio(), dpi_scaling());
   }
 }
 
@@ -84,31 +86,6 @@ float MainWindow::pixel_ratio() {
   glfwGetFramebufferSize(window_, &fbo_size[0], &fbo_size[1]);
   glfwGetWindowSize(window_, &win_size[0], &win_size[1]);
   return static_cast<float>(fbo_size[0]) / static_cast<float>(win_size[0]);
-}
-
-void MainWindow::reload_font(int font_size) {
-  ImGuiIO &io = ImGui::GetIO();
-  io.Fonts->Clear();
-  io.Fonts->AddFontFromMemoryCompressedTTF(droid_sans_compressed_data,
-                                           droid_sans_compressed_size,
-                                           font_size * dpi_scaling());
-  io.FontGlobalScale = 1.0F / pixel_ratio();
-  ImGui_ImplOpenGL3_DestroyDeviceObjects();
-}
-
-void MainWindow::init_style() {
-  ImGui::StyleColorsLight();
-  ImGuiStyle &style = ImGui::GetStyle();
-  style.FrameRounding = 5.0f;
-  style.ChildRounding = 5.0f;
-  style.GrabRounding = 5.0f;
-  style.PopupRounding = 5.0f;
-  style.ScrollbarRounding = 5.0f;
-  style.TabRounding = 5.0f;
-  style.WindowRounding = 5.0f;
-
-  // load font
-  reload_font();
 }
 
 void MainWindow::post_resize(int w, int h) {

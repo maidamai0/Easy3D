@@ -71,11 +71,6 @@ private:
 
   float widget_scaling() { return dpi_scaling() / pixel_ratio(); }
 
-  // We don't need a per-window font. So this function is static
-  void reload_font(int font_size = 15);
-
-  void init_style();
-
 private:
   // Single global context by default, but can be overridden by the user
   static ImGuiContext *context_;
