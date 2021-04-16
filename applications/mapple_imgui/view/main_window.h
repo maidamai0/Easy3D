@@ -36,9 +36,7 @@ namespace easy3d {
 
 class MainWindow : public Viewer {
 public:
-  MainWindow(const std::string &title = "Easy3D ImGui Viewer", int samples = 4,
-             int gl_major = 3, int gl_minor = 2, bool full_screen = false,
-             bool resizable = true, int depth_bits = 24, int stencil_bits = 8);
+  MainWindow();
 
 protected:
   // imgui plugins

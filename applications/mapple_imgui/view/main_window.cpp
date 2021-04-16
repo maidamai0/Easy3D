@@ -45,15 +45,7 @@ namespace easy3d {
 
 ImGuiContext *MainWindow::context_ = nullptr;
 
-MainWindow::MainWindow(const std::string &title /* = "Easy3D ImGui Viewer" */,
-                       int samples /* = 4 */, int gl_major /* = 3 */,
-                       int gl_minor /* = 2 */, bool full_screen /* = false */,
-                       bool resizable /* = true */, int depth_bits /* = 24 */,
-                       int stencil_bits /* = 8 */
-                       )
-    : Viewer(title, samples, gl_major, gl_minor, full_screen, resizable,
-             depth_bits, stencil_bits),
-      alpha_(0.8f), movable_(true) {
+MainWindow::MainWindow() : Viewer("Mapple"), alpha_(0.8f), movable_(true) {
   camera()->setUpVector(vec3(0, 1, 0));
   camera()->setViewDirection(vec3(0, 0, -1));
   camera_->showEntireScene();
@@ -70,7 +62,7 @@ void MainWindow::init() {
     context_ = ImGui::CreateContext();
 
     const char *glsl_version = "#version 150";
-    ImGui_ImplGlfw_InitForOpenGL(window_, false);
+    ImGui_ImplGlfw_InitForOpenGL(window_, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
     ImGuiIO &io = ImGui::GetIO();
     // io.WantCaptureKeyboard = true;
@@ -153,26 +145,6 @@ void MainWindow::post_draw() {
   ImGui::ShowDemoWindow();
   ImGui::ShowMetricsWindow();
 
-  // static bool show_overlay = true;
-  // if (show_overlay)
-  //   draw_overlay(&show_overlay);
-
-  static bool show_about = false;
-  if (show_about) {
-    ImGui::SetNextWindowPos(ImVec2(width() * 0.5f, height() * 0.5f),
-                            ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-    ImGui::Begin("About Easy3D ImGui Viewer", &show_about,
-                 ImGuiWindowFlags_NoResize);
-    ImGui::Text("This viewer shows how to use ImGui for GUI creation and event "
-                "handling");
-    ImGui::Separator();
-    ImGui::Text("\n"
-                "Liangliang Nan\n"
-                "liangliang.nan@gmail.com\n"
-                "https://3d.bk.tudelft.nl/liangliang/\n");
-    ImGui::End();
-  }
-
   static bool show_manual = false;
   if (show_manual) {
     int w, h;
@@ -186,15 +158,7 @@ void MainWindow::post_draw() {
 
   if (ImGui::BeginMainMenuBar()) {
     draw_menu_file();
-
     draw_menu_view();
-
-    if (ImGui::BeginMenu("Help")) {
-      ImGui::MenuItem("Manual", nullptr, &show_manual);
-      ImGui::Separator();
-      ImGui::MenuItem("About", nullptr, &show_about);
-      ImGui::EndMenu();
-    }
     menu_height_ = ImGui::GetWindowHeight();
     ImGui::Text("Frame rate: %.1f", ImGui::GetIO().Framerate);
     ImGui::Text("GPU time (ms): %s", gpu_time_);

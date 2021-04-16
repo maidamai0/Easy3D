@@ -33,7 +33,7 @@ using namespace easy3d;
 
 int main(int argc, char **argv) {
   logging::initialize(false, AppState().LogPath(), AppState().LogLevel());
-  MainWindow window("Mapple");
+  MainWindow window;
   return window.run();
 }
 
