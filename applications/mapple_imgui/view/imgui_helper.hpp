@@ -51,7 +51,7 @@ inline bool CheckButton(const std::string &label, bool checked,
   return checked;
 }
 
-inline int ButtonTab(std::vector<std::string> &tabs, int index) {
+inline int ButtonTab(std::vector<std::string> &tabs, int &index) {
   auto checked = 1 << index;
   std::string tab_names;
   std::for_each(tabs.begin(), tabs.end(),

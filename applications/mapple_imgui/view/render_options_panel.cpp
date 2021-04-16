@@ -36,9 +36,8 @@ void show() {
 
   // detail options
   {
-    const auto current_index = ImGuiHelper::ButtonTab(tabs, selected_index);
-    selected_index = current_index;
-    std::string text = tabs[current_index] + " Options";
+    ImGuiHelper::ButtonTab(tabs, selected_index);
+    std::string text = tabs[selected_index] + " Options";
     ImGuiHelper::AlignedText(text, ImGuiHelper::Alignment::kCenter);
   }
 
