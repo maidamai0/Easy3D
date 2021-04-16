@@ -31,7 +31,7 @@ inline void AlignedText(const std::string &text, Alignment align) {
   ImGui::Text("%s", text.c_str());
 }
 
-inline bool CheckButton(const std::string &label, bool &checked,
+inline bool CheckButton(const std::string &label, bool checked,
                         const ImVec2 &size) {
   ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
                         ImGui::GetStyle().Colors[ImGuiCol_TabUnfocusedActive]);
@@ -51,10 +51,11 @@ inline bool CheckButton(const std::string &label, bool &checked,
   return checked;
 }
 
-inline int ButtonTab(std::vector<std::pair<std::string, bool>> &tabs) {
+inline int ButtonTab(std::vector<std::string> &tabs, int index) {
+  auto checked = 1 << index;
   std::string tab_names;
   std::for_each(tabs.begin(), tabs.end(),
-                [&tab_names](const auto item) { tab_names += item.first; });
+                [&tab_names](const auto item) { tab_names += item; });
   const auto tab_width = ImGui::GetContentRegionAvailWidth();
   const auto tab_btn_width = tab_width / tabs.size();
   const auto h = ImGui::CalcTextSize(tab_names.c_str()).y;
@@ -74,12 +75,10 @@ inline int ButtonTab(std::vector<std::pair<std::string, bool>> &tabs) {
     auto &tab = tabs[i];
 
     // if current tab is checkd, uncheck otheres
-    if (CheckButton(tab.first.c_str(), tab.second, ImVec2{tab_btn_width, 0})) {
-      std::for_each(tabs.begin(), tabs.end(), [tab](auto &item) {
-        if (item.first != tab.first) {
-          item.second = false;
-        }
-      });
+    if (CheckButton(tab.c_str(), checked & (1 << i),
+                    ImVec2{tab_btn_width, 0})) {
+      checked = 0;
+      checked = 1 << i;
     }
 
     if (i != tabs.size() - 1) {
@@ -90,6 +89,12 @@ inline int ButtonTab(std::vector<std::pair<std::string, bool>> &tabs) {
   ImGui::PopStyleVar(3);
   ImGui::EndChild();
 
-  return 1;
+  index = 0;
+  while (checked / 2) {
+    checked = checked / 2;
+    ++index;
+  }
+
+  return index;
 }
 } // namespace ImGuiHelper
