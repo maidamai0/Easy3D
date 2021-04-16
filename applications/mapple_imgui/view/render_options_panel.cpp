@@ -30,10 +30,23 @@ void show() {
   }
 
   // tabs
-  {
-    static auto tabs = std::vector<std::pair<std::string, bool>>{
+  ImGui::Dummy({0.0f, 10.f});
+  static auto tabs = std::vector<std::pair<std::string, bool>>{
         {"Point", true}, {"Line", false}, {"Face", false}};
-    ImGuiHelper::ButtonTab(tabs);
+  ImGuiHelper::ButtonTab(tabs);
+
+  // detail options
+  {
+    std::string text;
+    if (tabs[0].second) {
+      text = "Point Options";
+    } else if (tabs[1].second) {
+      text = "Line Options";
+    } else {
+      text = "Face Options";
+    }
+
+    ImGuiHelper::AlignedText(text, ImGuiHelper::Alignment::kCenter);
   }
 
   ImGui::End();

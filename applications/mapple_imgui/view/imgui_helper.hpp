@@ -1,6 +1,7 @@
 #pragma once
 
 #include <3rd_party/imgui/imgui.h>
+#include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
@@ -32,34 +33,62 @@ inline void AlignedText(const std::string &text, Alignment align) {
 
 inline bool CheckButton(const std::string &label, bool &checked,
                         const ImVec2 &size) {
+  ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
+                        ImGui::GetStyle().Colors[ImGuiCol_TabUnfocusedActive]);
   if (checked) {
-    ImGui::PushStyleColor(ImGuiCol_Button, {0.6f, 0.6f, 0.6f, 1.0f});
+    ImGui::PushStyleColor(ImGuiCol_Button,
+                          ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
   } else {
-    ImGui::PushStyleColor(ImGuiCol_Button, {0.5f, 0.5f, 0.0f, 1.0f});
+    ImGui::PushStyleColor(ImGuiCol_Button,
+                          ImGui::GetStyle().Colors[ImGuiCol_TabUnfocused]);
   }
   if (ImGui::Button(label.c_str(), size)) {
     checked = !checked;
   }
 
-  ImGui::PopStyleColor();
+  ImGui::PopStyleColor(2);
 
   return checked;
 }
 
-inline int ButtonTab(std::vector<std::pair<std::string, bool>> &tab_names) {
+inline int ButtonTab(std::vector<std::pair<std::string, bool>> &tabs) {
+  std::string tab_names;
+  std::for_each(tabs.begin(), tabs.end(),
+                [&tab_names](const auto item) { tab_names += item.first; });
   const auto tab_width = ImGui::GetContentRegionAvailWidth();
-  const auto tab_btn_width = tab_width / tab_names.size();
-  const auto h = ImGui::CalcTextSize("Ag").y;
+  const auto tab_btn_width = tab_width / tabs.size();
+  const auto h = ImGui::CalcTextSize(tab_names.c_str()).y;
   ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 0});
   ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, h);
-  for (int i = 0; i < tab_names.size(); ++i) {
-    CheckButton(tab_names[i].first.c_str(), tab_names[i].second,
-                ImVec2{tab_btn_width, 0});
-    if (i != tab_names.size() - 1) {
+  ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, h);
+
+  ImGui::PushStyleColor(ImGuiCol_ChildBg,
+                        ImGui::GetStyle().Colors[ImGuiCol_TabUnfocused]);
+  ImGui::BeginChild(tab_names.c_str(),
+                    {tab_width, h + ImGui::GetStyle().FramePadding.y * 2},
+                    false,
+                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                        ImGuiWindowFlags_NoResize);
+
+  for (int i = 0; i < tabs.size(); ++i) {
+    auto &tab = tabs[i];
+
+    // if current tab is checkd, uncheck otheres
+    if (CheckButton(tab.first.c_str(), tab.second, ImVec2{tab_btn_width, 0})) {
+      std::for_each(tabs.begin(), tabs.end(), [tab](auto &item) {
+        if (item.first != tab.first) {
+          item.second = false;
+        }
+      });
+    }
+
+    if (i != tabs.size() - 1) {
       ImGui::SameLine();
     }
   }
-  ImGui::PopStyleVar(2);
+  ImGui::PopStyleColor();
+  ImGui::PopStyleVar(3);
+  ImGui::EndChild();
 
   return 1;
 }
