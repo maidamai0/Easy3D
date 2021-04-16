@@ -1,7 +1,10 @@
 #include "3rd_party/imgui/imgui.h"
+
+#include "fork_awesome.h"
 #include "imgui_helper.hpp"
 #include "state/state.h"
 #include "view/style.hpp"
+
 #include <string>
 #include <utility>
 #include <vector>
@@ -31,13 +34,14 @@ void show() {
 
   // tabs
   ImGui::Dummy({0.0f, 10.f});
-  static auto tabs = std::vector<std::string>{"Point", "Line", "Face"};
+  static auto tabs =
+      std::vector<std::string>{"Surface", "Line", "Points", "Global"};
   static auto selected_index = 0;
 
   // detail options
   {
     ImGuiHelper::ButtonTab(tabs, selected_index);
-    std::string text = tabs[selected_index] + " Options";
+    std::string text = tabs[selected_index] + " Options " + ICON_FK_CAMERA;
     ImGuiHelper::AlignedText(text, ImGuiHelper::Alignment::kCenter);
   }
 

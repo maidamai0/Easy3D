@@ -1,11 +1,11 @@
 #pragma once
 
 #include "3rd_party/imgui/imgui.h"
-#include "view/style.hpp"
 #include <3rd_party/imgui/backends/imgui_impl_opengl3.h>
 #include <3rd_party/imgui/misc/fonts/imgui_fonts_droid_sans.h>
 
-#include <unordered_map>
+#include "fork_awesome.h"
+#include "fork_awesome_webfont.h"
 
 namespace style {
 enum class Font { kDefault, kSize1_5X };
@@ -24,6 +24,16 @@ inline void reload_font(const float pixel_ratio, const float dpi_scaling) {
   io.Fonts->AddFontFromMemoryCompressedTTF(
       droid_sans_compressed_data, droid_sans_compressed_size,
       details::kDefauleFontSize * dpi_scaling);
+
+  ImFontConfig config;
+  config.MergeMode = true;
+  config.PixelSnapH = true;
+  config.GlyphMinAdvanceX = details::kDefauleFontSize * dpi_scaling;
+  static const ImWchar icon_ranges[] = {ICON_MIN_FK, ICON_MAX_FK, 0};
+  io.Fonts->AddFontFromMemoryCompressedTTF(
+      fork_awesome_compressed_data, fork_awesome_compressed_size,
+      details::kDefauleFontSize * dpi_scaling, &config, icon_ranges);
+
   io.Fonts->AddFontFromMemoryCompressedTTF(
       droid_sans_compressed_data, droid_sans_compressed_size,
       details::kDefauleFontSize * dpi_scaling * 1.5f);
