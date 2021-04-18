@@ -41,7 +41,7 @@ void show() {
   // detail options
   {
     ImGuiHelper::ButtonTab(tabs, selected_index);
-    std::string text = tabs[selected_index] + " Options " + ICON_FK_CAMERA;
+    std::string text = tabs[selected_index] + " Options " + ICON_FK_COG;
     ImGuiHelper::AlignedText(text, ImGuiHelper::Alignment::kCenter);
   }
 

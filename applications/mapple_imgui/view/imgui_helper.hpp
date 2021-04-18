@@ -40,7 +40,7 @@ inline bool CheckButton(const std::string &label, bool checked,
                           ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
   } else {
     ImGui::PushStyleColor(ImGuiCol_Button,
-                          ImGui::GetStyle().Colors[ImGuiCol_TabUnfocused]);
+                          ImGui::GetStyle().Colors[ImGuiCol_TitleBgActive]);
   }
   if (ImGui::Button(label.c_str(), size)) {
     checked = !checked;
@@ -64,7 +64,7 @@ inline int ButtonTab(std::vector<std::string> &tabs, int &index) {
   ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, h);
 
   ImGui::PushStyleColor(ImGuiCol_ChildBg,
-                        ImGui::GetStyle().Colors[ImGuiCol_TabUnfocused]);
+                        ImGui::GetStyle().Colors[ImGuiCol_TitleBgActive]);
   ImGui::BeginChild(tab_names.c_str(),
                     {tab_width, h + ImGui::GetStyle().FramePadding.y * 2},
                     false,
