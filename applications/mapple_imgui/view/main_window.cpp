@@ -62,7 +62,7 @@ void MainWindow::init() {
     context_ = ImGui::CreateContext();
 
     const char *glsl_version = "#version 150";
-    ImGui_ImplGlfw_InitForOpenGL(window_, true);
+    ImGui_ImplGlfw_InitForOpenGL(window_, 1);
     ImGui_ImplOpenGL3_Init(glsl_version);
     ImGuiIO &io = ImGui::GetIO();
     // io.WantCaptureKeyboard = true;
