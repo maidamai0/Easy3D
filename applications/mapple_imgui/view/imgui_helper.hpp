@@ -20,7 +20,7 @@ enum class Alignment : unsigned char {
 inline void AlignedText(const std::string &text, Alignment align) {
   const auto alignment = static_cast<unsigned char>(align);
   const auto text_size = ImGui::CalcTextSize(text.c_str());
-  const auto wind_size = ImGui::GetWindowSize();
+  const auto wind_size = ImGui::GetContentRegionAvail();
   if (alignment & static_cast<unsigned char>(Alignment::kHorizontalCenter)) {
     ImGui::SetCursorPosX((wind_size.x - text_size.x) * 0.5f);
   }
@@ -28,7 +28,7 @@ inline void AlignedText(const std::string &text, Alignment align) {
     ImGui::SetCursorPosY((wind_size.y - text_size.y) * 0.5f);
   }
 
-  ImGui::Text("%s", text.c_str());
+  ImGui::TextUnformatted(text.c_str());
 }
 
 inline bool CheckButton(const std::string &label, bool checked,
@@ -97,4 +97,43 @@ inline int ButtonTab(std::vector<std::string> &tabs, int &index) {
 
   return index;
 }
+
+inline bool SwitchButton(std::string &&label, bool &checked) {
+  const auto width = ImGui::GetContentRegionAvailWidth();
+  const auto h = ImGui::CalcTextSize(label.c_str()).y;
+  const auto button_width = 1.6f * h;
+  // AlignedText(label, Alignment::kVerticalCenter);
+  ImGui::TextUnformatted(label.c_str());
+  ImGui::SameLine();
+
+  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 0});
+  ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, h);
+  ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, h);
+  ImGui::SetCursorPosX(width - button_width);
+  if (checked) {
+    ImGui::PushStyleColor(ImGuiCol_ChildBg,
+                          ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
+  } else {
+    ImGui::PushStyleColor(ImGuiCol_ChildBg,
+                          ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
+  }
+  ImGui::BeginChild(label.c_str(),
+                    {button_width, h + ImGui::GetStyle().FramePadding.y * 2},
+                    false,
+                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                        ImGuiWindowFlags_NoResize);
+  // ImGui::SetCursorPosX(1);
+
+  ImGui::EndChild();
+
+  if (ImGui::IsItemClicked()) {
+    checked = !checked;
+  }
+
+  ImGui::PopStyleVar(3);
+  ImGui::PopStyleColor();
+
+  return checked;
+}
+
 } // namespace ImGuiHelper

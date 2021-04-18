@@ -43,6 +43,9 @@ void show() {
     ImGuiHelper::ButtonTab(tabs, selected_index);
     std::string text = tabs[selected_index] + " Options " + ICON_FK_COG;
     ImGuiHelper::AlignedText(text, ImGuiHelper::Alignment::kCenter);
+
+    static bool visible = true;
+    ImGuiHelper::SwitchButton("Visible", visible);
   }
 
   ImGui::End();
