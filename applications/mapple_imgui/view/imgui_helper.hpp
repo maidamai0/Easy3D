@@ -130,4 +130,15 @@ inline void SwitchButton(std::string &&label, bool &checked) {
       radius - 1.5f, IM_COL32_WHITE);
 }
 
+inline void Comb(std::string &&label, const std::vector<const char *> &items,
+                 int &index) {
+  const auto p_w = ImGui::GetContentRegionAvailWidth();
+  ImGuiHelper::AlignedText(label.c_str(),
+                           ImGuiHelper::Alignment::kVerticalCenter);
+  ImGui::SameLine();
+  ImGui::SetCursorPosX(p_w - 150.0f - ImGui::GetStyle().FramePadding.x);
+  ImGui::SetNextItemWidth(150.0f);
+  ImGui::Combo(label.c_str(), &index, items.data(), items.size());
+}
+
 } // namespace ImGuiHelper
