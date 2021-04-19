@@ -43,31 +43,49 @@ void show() {
   }
 
   {
-
     static auto index = 0;
     std::vector<const char *> items{"uniform color", "scalar - f:chart"};
     ImGuiHelper::Comb(std::string(ICON_FK_FLASK) + "    Coloring", items,
                       index);
     ImGui::Separator();
 
-    {
-      ImGuiHelper::AlignedText(std::string(ICON_FK_EYEDROPPER) +
-                                   "    Default Color",
+    if (index == 1) {
+      const auto width = ImGui::GetContentRegionAvailWidth();
+      ImGuiHelper::AlignedText(std::string(ICON_FK_EYEDROPPER) + "    Front",
                                ImGuiHelper::Alignment::kVerticalCenter);
       ImGui::SameLine();
-      static ImColor font_color;
-      ImGui::ColorEdit4("MyColor##default", (float *)&font_color,
-                        ImGuiColorEditFlags_NoInputs |
-                            ImGuiColorEditFlags_NoLabel);
+      ImGui::SetCursorPosX(width - 200.0f);
+      ImGui::PushItemWidth(200.0f);
+      static ImColor font_color{
+          ImGui::GetStyle().Colors[ImGuiCol_PlotHistogram]};
+      ImGui::ColorEdit4("FrontColor##default", (float *)&font_color,
+                        ImGuiColorEditFlags_NoLabel);
       ImGui::Separator();
+      ImGui::PopItemWidth();
+    }
+
+    {
+      const auto width = ImGui::GetContentRegionAvailWidth();
+      ImGuiHelper::AlignedText(std::string(ICON_FK_EYEDROPPER) + "    Back",
+                               ImGuiHelper::Alignment::kVerticalCenter);
+      ImGui::SameLine();
+      ImGui::SetCursorPosX(width - 200.0f);
+      ImGui::PushItemWidth(200.0f);
+      static ImColor back_color{ImGui::GetStyle().Colors[ImGuiCol_PlotLines]};
+      ImGui::ColorEdit4("BackColor##default", (float *)&back_color,
+                        ImGuiColorEditFlags_NoLabel);
+      ImGui::Separator();
+      ImGui::PopItemWidth();
     }
   }
 
   {
-    for (int i = 0; i < 10; ++i) {
-      ImGuiHelper::AlignedText("Options", ImGuiHelper::Alignment::kCenter);
-      ImGui::Separator();
-    }
+    static auto index = 0;
+    std::vector<const char *> items{"disabled", "f:normal"};
+    ImGuiHelper::Comb(std::string(ICON_FK_ARROW_CIRCLE_O_UP) +
+                          "    Vecor field",
+                      items, index);
+    ImGui::Separator();
   }
 }
 } // namespace SurfaceRenderOptions
