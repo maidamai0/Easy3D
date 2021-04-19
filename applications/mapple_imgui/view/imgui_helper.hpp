@@ -25,7 +25,7 @@ inline void AlignedText(const std::string &text, Alignment align) {
     ImGui::SetCursorPosX((wind_size.x - text_size.x) * 0.5f);
   }
   if (alignment & static_cast<unsigned char>(Alignment::kVerticalCenter)) {
-    ImGui::SetCursorPosY((wind_size.y - text_size.y) * 0.5f);
+    ImGui::AlignTextToFramePadding();
   }
 
   ImGui::TextUnformatted(text.c_str());
@@ -98,42 +98,36 @@ inline int ButtonTab(std::vector<std::string> &tabs, int &index) {
   return index;
 }
 
-inline bool SwitchButton(std::string &&label, bool &checked) {
-  const auto width = ImGui::GetContentRegionAvailWidth();
-  const auto h = ImGui::CalcTextSize(label.c_str()).y;
-  const auto button_width = 1.6f * h;
-  // AlignedText(label, Alignment::kVerticalCenter);
-  ImGui::TextUnformatted(label.c_str());
+inline void SwitchButton(std::string &&label, bool &checked) {
+  float height = ImGui::GetFrameHeight();
+  float width = height * 1.55f;
+  float radius = height * 0.50f;
+  const auto frame_width = ImGui::GetContentRegionAvailWidth();
+
+  {
+    // ImGui::PushFont(style::Font(style::Font::kSize1_5X));
+    AlignedText(label.c_str(), Alignment::kVerticalCenter);
+    // ImGui::PopFont();
+  }
   ImGui::SameLine();
 
-  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {0, 0});
-  ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, h);
-  ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, h);
-  ImGui::SetCursorPosX(width - button_width);
-  if (checked) {
-    ImGui::PushStyleColor(ImGuiCol_ChildBg,
-                          ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
-  } else {
-    ImGui::PushStyleColor(ImGuiCol_ChildBg,
-                          ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
-  }
-  ImGui::BeginChild(label.c_str(),
-                    {button_width, h + ImGui::GetStyle().FramePadding.y * 2},
-                    false,
-                    ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
-                        ImGuiWindowFlags_NoResize);
-  // ImGui::SetCursorPosX(1);
-
-  ImGui::EndChild();
-
-  if (ImGui::IsItemClicked()) {
+  ImGui::SetCursorPosX(frame_width - width);
+  ImVec2 pos = ImGui::GetCursorScreenPos();
+  if (ImGui::InvisibleButton(label.c_str(), ImVec2(width, height)))
     checked = !checked;
+  ImU32 col_bg;
+  if (checked) {
+    col_bg = ImColor(ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
+  } else {
+    col_bg = ImColor(ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
   }
-
-  ImGui::PopStyleVar(3);
-  ImGui::PopStyleColor();
-
-  return checked;
+  ImDrawList *draw_list = ImGui::GetWindowDrawList();
+  draw_list->AddRectFilled(pos, ImVec2(pos.x + width, pos.y + height), col_bg,
+                           radius);
+  draw_list->AddCircleFilled(
+      ImVec2(checked ? (pos.x + width - radius) : (pos.x + radius),
+             pos.y + radius),
+      radius - 1.5f, IM_COL32_WHITE);
 }
 
 } // namespace ImGuiHelper
