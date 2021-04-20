@@ -13,23 +13,21 @@ void show() {
 
     static auto index = 0;
     std::vector<const char *> items{"faces", "lines"};
-    ImGuiHelper::Comb(std::string(ICON_FK_CUBE) + "    Drawables", items,
-                      index);
+    ImGuiHelper::Comb(ICON_FK_CUBE, "Drawables", items, index);
     ImGui::Separator();
   }
 
   {
     static bool visible = true;
-    ImGuiHelper::SwitchButton(std::string(ICON_FK_EYE) + "    Visible",
-                              visible);
+    ImGuiHelper::SwitchButton(ICON_FK_EYE, "Visible", visible);
     ImGui::Separator();
   }
 
   {
 
     static bool phong_shading = true;
-    ImGuiHelper::SwitchButton(
-        std::string(ICON_FK_LIGHTBULB_O) + "    Phong Shading", phong_shading);
+    ImGuiHelper::SwitchButton(ICON_FK_LIGHTBULB_O, "Phong Shading",
+                              phong_shading);
     ImGui::Separator();
   }
 
@@ -37,16 +35,14 @@ void show() {
 
     static auto index = 0;
     std::vector<const char *> items{"front", "back", "front and back"};
-    ImGuiHelper::Comb(std::string(ICON_FK_SUN_O) + "    Lighting", items,
-                      index);
+    ImGuiHelper::Comb(ICON_FK_SUN_O, "Lighting", items, index);
     ImGui::Separator();
   }
 
   {
     static auto index = 0;
     std::vector<const char *> items{"uniform color", "scalar - f:chart"};
-    ImGuiHelper::Comb(std::string(ICON_FK_FLASK) + "    Coloring", items,
-                      index);
+    ImGuiHelper::Comb(ICON_FK_FLASK, "Coloring", items, index);
     ImGui::Separator();
 
     if (index == 1) {
@@ -82,9 +78,7 @@ void show() {
   {
     static auto index = 0;
     std::vector<const char *> items{"disabled", "f:normal"};
-    ImGuiHelper::Comb(std::string(ICON_FK_ARROW_CIRCLE_O_UP) +
-                          "    Vecor field",
-                      items, index);
+    ImGuiHelper::Comb(ICON_FK_ARROW_CIRCLE_O_UP, "Vecor field", items, index);
     ImGui::Separator();
   }
 }

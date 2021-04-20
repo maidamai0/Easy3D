@@ -17,12 +17,18 @@ enum class Alignment : unsigned char {
 /**
  * @brief Render text with alignment
  */
-inline void AlignedText(const std::string &text, Alignment align) {
+inline void AlignedText(const std::string &text, Alignment align,
+                        const float &width = 0.0f) {
   const auto alignment = static_cast<unsigned char>(align);
   const auto text_size = ImGui::CalcTextSize(text.c_str());
   const auto wind_size = ImGui::GetContentRegionAvail();
   if (alignment & static_cast<unsigned char>(Alignment::kHorizontalCenter)) {
-    ImGui::SetCursorPosX((wind_size.x - text_size.x) * 0.5f);
+    if (width < 0.1f) {
+      ImGui::SetCursorPosX((wind_size.x - text_size.x) * 0.5f);
+    } else {
+      ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
+                           (width - text_size.x) * 0.5f);
+    }
   }
   if (alignment & static_cast<unsigned char>(Alignment::kVerticalCenter)) {
     ImGui::AlignTextToFramePadding();
@@ -98,17 +104,14 @@ inline int ButtonTab(std::vector<std::string> &tabs, int &index) {
   return index;
 }
 
-inline void SwitchButton(std::string &&label, bool &checked) {
+inline void SwitchButton(std::string &&icon, std::string &&label,
+                         bool &checked) {
   float height = ImGui::GetFrameHeight();
   float width = height * 1.55f;
   float radius = height * 0.50f;
   const auto frame_width = ImGui::GetContentRegionAvailWidth();
 
-  {
-    // ImGui::PushFont(style::Font(style::Font::kSize1_5X));
-    AlignedText(label.c_str(), Alignment::kVerticalCenter);
-    // ImGui::PopFont();
-  }
+  AlignedText(icon + "    " + label, Alignment::kVerticalCenter);
   ImGui::SameLine();
 
   ImGui::SetCursorPosX(frame_width - width);
@@ -130,15 +133,24 @@ inline void SwitchButton(std::string &&label, bool &checked) {
       radius - 1.5f, IM_COL32_WHITE);
 }
 
-inline void Comb(std::string &&label, const std::vector<const char *> &items,
-                 int &index) {
+inline void Comb(std::string &&icon, std::string &&label,
+                 const std::vector<const char *> &items, int &index) {
   const auto p_w = ImGui::GetContentRegionAvailWidth();
-  ImGuiHelper::AlignedText(label.c_str(),
-                           ImGuiHelper::Alignment::kVerticalCenter);
+  AlignedText(icon + "    " + label, Alignment::kVerticalCenter);
   ImGui::SameLine();
   ImGui::SetCursorPosX(p_w - 150.0f - ImGui::GetStyle().FramePadding.x);
   ImGui::SetNextItemWidth(150.0f);
-  ImGui::Combo(label.c_str(), &index, items.data(), items.size());
+  ImGui::Combo(label.c_str(), &index, items.data(),
+               static_cast<int>(items.size()));
+}
+
+inline void InputInt(std::string &&icon, std::string &&label, int &value) {
+  const auto p_w = ImGui::GetContentRegionAvailWidth();
+  AlignedText(icon + "    " + label, Alignment::kVerticalCenter);
+  ImGui::SameLine();
+  ImGui::SetCursorPosX(p_w - 100.0f - ImGui::GetStyle().FramePadding.x);
+  ImGui::SetNextItemWidth(100.0f);
+  ImGui::InputInt((std::string("##") + label).c_str(), &value);
 }
 
 } // namespace ImGuiHelper
