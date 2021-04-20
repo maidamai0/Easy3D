@@ -56,6 +56,26 @@ void show() {
         SurfaceRenderOptions::show, LineRenderOptions::show,
         PointsRenderOptions::show, GlobRenderOptions::show};
     options[selected_index]();
+
+    {
+      // debug
+      ImGui::Dummy({0, 30});
+      ImGui::Separator();
+      auto static show_metrics = false;
+      ImGuiHelper::SwitchButton(ICON_FK_WRENCH, "Window Metrics", show_metrics);
+      ImGui::Separator();
+      if (show_metrics) {
+        ImGui::ShowMetricsWindow();
+      }
+
+      auto static show_demo = false;
+      ImGuiHelper::SwitchButton(ICON_FK_ROCKET, "Demo", show_demo);
+      ImGui::Separator();
+      if (show_demo) {
+        ImGui::ShowDemoWindow();
+      }
+    }
+
     ImGui::EndChild();
   }
 

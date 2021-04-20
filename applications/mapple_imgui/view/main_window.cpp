@@ -142,9 +142,6 @@ void MainWindow::pre_draw() {
 }
 
 void MainWindow::post_draw() {
-  ImGui::ShowDemoWindow();
-  ImGui::ShowMetricsWindow();
-
   static bool show_manual = false;
   if (show_manual) {
     int w, h;

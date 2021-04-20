@@ -32,6 +32,7 @@ void show() {
     static auto imposter_index = 0;
     std::vector<const char *> items{"plain", "cylider", "cone"};
     ImGuiHelper::Comb(ICON_FK_HASHTAG, "Imposter", items, imposter_index);
+    ImGui::Separator();
   }
 }
 } // namespace LineRenderOptions
